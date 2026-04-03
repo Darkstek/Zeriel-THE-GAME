@@ -1,9 +1,11 @@
 import Phaser from 'phaser'
 import { Enemy } from '../entities/Enemy'
+import { Bullet } from '../entities/Bullet'
 
 export class GameScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Rectangle
   private enemies: Enemy[] = []
+  private bullets: Bullet[] = []
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private scoreText!: Phaser.GameObjects.Text
   private gameOver: boolean = false
@@ -54,6 +56,35 @@ export class GameScene extends Phaser.Scene {
       },
       loop: true
     })
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        if (this.gameOver) return
+        if (this.enemies.length === 0) return
+
+        let closestEnemy = this.enemies[0]
+        let closestDistance = closestEnemy.distanceTo(this.player.x, this.player.y)
+
+        this.enemies.forEach((enemy) => {
+          const distance = enemy.distanceTo(this.player.x, this.player.y)
+          if (distance < closestDistance) {
+            closestDistance = distance
+            closestEnemy = enemy
+          }
+        })
+
+        const bullet = new Bullet(
+          this,
+          this.player.x,
+          this.player.y,
+          closestEnemy.rectangle.x,
+          closestEnemy.rectangle.y
+        )
+        this.bullets.push(bullet)
+      },
+      loop: true
+    })
   }
 
   update() {
@@ -93,6 +124,31 @@ export class GameScene extends Phaser.Scene {
           color: '#ffff00'
         }).setOrigin(0.5)
       }
+    })
+
+    this.bullets = this.bullets.filter((bullet) => {
+      bullet.move()
+
+      if (bullet.isOutOfBounds()) {
+        bullet.destroy()
+        return false
+      }
+
+      const hitIndex = this.enemies.findIndex((enemy) =>
+        bullet.rectangle.x > enemy.rectangle.x - 16 &&
+        bullet.rectangle.x < enemy.rectangle.x + 16 &&
+        bullet.rectangle.y > enemy.rectangle.y - 16 &&
+        bullet.rectangle.y < enemy.rectangle.y + 16
+      )
+
+      if (hitIndex !== -1) {
+        this.enemies[hitIndex].rectangle.destroy()
+        this.enemies.splice(hitIndex, 1)
+        bullet.destroy()
+        return false
+      }
+
+      return true
     })
   }
 }
