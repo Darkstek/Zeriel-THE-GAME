@@ -10,6 +10,8 @@ export class GameScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text
   private gameOver: boolean = false
   private score: number = 0
+  private hp: number = 3
+  private invincible: boolean = false
 
   constructor() {
     super({ key: 'GameScene' })
@@ -29,6 +31,11 @@ export class GameScene extends Phaser.Scene {
     this.scoreText = this.add.text(16, 16, 'Skóre: 0', {
       fontSize: '24px',
       color: '#ffffff'
+    })
+    
+    this.hpText = this.add.text(16, 48, 'HP: ❤️❤️❤️', {
+      fontSize: '24px',
+      color: '#ff0000'
     })
 
     this.time.addEvent({
@@ -115,22 +122,35 @@ export class GameScene extends Phaser.Scene {
     this.enemies.forEach((enemy) => {
       enemy.moveTowards(this.player.x, this.player.y)
 
-      if (enemy.distanceTo(this.player.x, this.player.y) < 32) {
+     if (enemy.distanceTo(this.player.x, this.player.y) < 32 && !this.invincible) {
+  this.hp -= 1
+
+    if (this.hp <= 0) {
         this.gameOver = true
         this.player.setFillStyle(0xff0000)
         this.add.text(400, 280, 'GAME OVER', {
-          fontSize: '48px',
-          color: '#ffffff'
-        }).setOrigin(0.5)
+      fontSize: '48px',
+      color: '#ffffff'
+    }).setOrigin(0.5)
         this.add.text(400, 340, 'Přežil jsi: ' + this.score + ' sekund', {
-          fontSize: '24px',
-          color: '#ffff00'
-        }).setOrigin(0.5)
+      fontSize: '24px',
+      color: '#ffff00'
+    }).setOrigin(0.5)
         this.add.text(400, 390, 'Stiskni R pro restart', {
-          fontSize: '20px',
-          color: '#aaaaaa'
-        }).setOrigin(0.5)
-      }
+      fontSize: '20px',
+      color: '#aaaaaa'
+    }).setOrigin(0.5)
+    } else {
+        this.hpText.setText('HP: ' + '❤️'.repeat(this.hp))
+        this.invincible = true
+        this.player.setFillStyle(0xff6600)
+
+        this.time.delayedCall(1500, () => {
+        this.invincible = false
+        this.player.setFillStyle(0x00ff00)
+    })
+  }
+}
     })
 
     this.bullets = this.bullets.filter((bullet) => {
