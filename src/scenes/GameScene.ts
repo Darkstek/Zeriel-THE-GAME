@@ -21,6 +21,9 @@ export class GameScene extends Phaser.Scene {
     this.player = this.add.rectangle(400, 300, 32, 32, 0x00ff00)
     this.cursors = this.input.keyboard!.createCursorKeys()
     this.gameOver = false
+    this.input.keyboard!.on('keydown-R', () => {
+    this.scene.restart()
+    })
     this.score = 0
 
     this.scoreText = this.add.text(16, 16, 'Skóre: 0', {
@@ -122,6 +125,10 @@ export class GameScene extends Phaser.Scene {
         this.add.text(400, 340, 'Přežil jsi: ' + this.score + ' sekund', {
           fontSize: '24px',
           color: '#ffff00'
+        }).setOrigin(0.5)
+        this.add.text(400, 390, 'Stiskni R pro restart', {
+          fontSize: '20px',
+          color: '#aaaaaa'
         }).setOrigin(0.5)
       }
     })
