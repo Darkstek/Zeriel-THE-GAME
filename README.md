@@ -1,7 +1,7 @@
 # Zeriel — Kill or Be Killed
 
 Browserová survival hra inspirovaná Vampire Survivors. Přežij co nejdéle, střílej automaticky na nepřátele a nekončí to dobře.
-Je to pro mě hlavně fun projekt 
+Je to pro mě hlavně fun projekt plus se na něm učím typescript 
 
 ## Jak hrát
 
