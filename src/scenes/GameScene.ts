@@ -17,9 +17,12 @@ export class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' })
   }
 
-  preload() {}
+  preload() {
+    this.load.image('mapa', 'Powidlomap.png')
+  }
 
   create() {
+    this.add.image(400, 300, 'mapa')
     this.player = this.add.rectangle(400, 300, 32, 32, 0x00ff00)
     this.cursors = this.input.keyboard!.createCursorKeys()
     this.gameOver = false
